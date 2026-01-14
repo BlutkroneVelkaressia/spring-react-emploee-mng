@@ -5,6 +5,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+!build/generated/querydsl/.gitkeep
 
 # Java
 *.class
@@ -17,7 +18,10 @@ replay_pid*
 
 # QueryDSL
 **/generated/querydsl/
+!**/generated/querydsl/.gitkeep
 **/Q*.java
+# QueryDSL 설정 파일은 예외 처리
+!**/QueryDslConfig.java
 
 ### STS ###
 .apt_generated
