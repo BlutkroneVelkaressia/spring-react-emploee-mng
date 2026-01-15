@@ -6,6 +6,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 !build/generated/querydsl/.gitkeep
+!gradle/wrapper/gradle-wrapper.jar
 
 # Java
 *.class

@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/employees")
-// 전역 CORS 설정을 사용하므로 개별 @CrossOrigin 제거
 public class EmployeeController {
 
     private final EmployeeService employeeService;
