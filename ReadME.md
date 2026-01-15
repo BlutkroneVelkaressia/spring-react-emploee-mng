@@ -22,6 +22,7 @@ Spring Boot와 React를 활용한 풀스택 직원 관리 웹 애플리케이션
 ### 백엔드
 
 #### 기술 스택
+
 - **Java**: 21
 - **Spring Boot**: 4.0.1
 - **Spring Data JPA**: 데이터베이스 접근
@@ -33,11 +34,13 @@ Spring Boot와 React를 활용한 풀스택 직원 관리 웹 애플리케이션
 #### 주요 의존성
 
 ```gradle
-- spring-boot-starter-webmvc
+- spring-boot-starter-webmvc (Spring Boot 4.0.1)
 - spring-boot-starter-data-jpa
 - spring-boot-starter-validation
-- querydsl-jpa (5.0.0)
-- h2database
+- spring-boot-starter-webmvc-test (테스트용)
+- querydsl-jpa (5.0.0:jakarta)
+- h2database (개발/테스트용)
+- mysql-connector-j (프로덕션용)
 - lombok
 ```
 
@@ -61,6 +64,7 @@ Spring Boot와 React를 활용한 풀스택 직원 관리 웹 애플리케이션
 ### 프론트엔드
 
 #### 기술 스택
+
 - **React**: 19.2.0
 - **TypeScript**: 5.9.3
 - **Vite**: 7.2.4 (빌드 도구)
@@ -74,17 +78,22 @@ Spring Boot와 React를 활용한 풀스택 직원 관리 웹 애플리케이션
 #### 주요 의존성
 
 ```json
-- @tanstack/react-query
-- axios
-- react-router-dom
-- styled-components
-- @tailwindcss/postcss
+- @tanstack/react-query (5.90.17)
+- axios (1.13.2)
+- react-router-dom (7.12.0)
+- react-icons (5.5.0)
+- styled-components (6.3.6)
+- tailwindcss (4.1.18)
+- @tailwindcss/postcss (4.1.18)
+- typescript (5.9.3)
+- vite (7.2.4)
 ```
 
 #### 개발 서버
 
-- **포트**: 5174 (기본값, 사용 가능한 포트로 자동 할당)
+- **포트**: 5173 (Vite 기본값, 사용 가능한 포트로 자동 할당)
 - **API Base URL**: <http://localhost:8080>
+- **환경 변수**: `.env` 파일에서 `VITE_API_BASE_URL` 설정 가능
 
 ## 프로젝트 구조
 
@@ -103,23 +112,31 @@ src/main/java/com/example/eme/
 │   │   └── Department.java              # 부서 엔티티
 │   ├── repository/
 │   │   ├── EmployeeRepository.java      # JPA 리포지토리
-│   │   ├── EmployeeRepositoryCustom.java
+│   │   ├── EmployeeRepositoryCustom.java # 커스텀 리포지토리 인터페이스
 │   │   ├── EmployeeRepositoryImpl.java  # QueryDSL 구현
-│   │   └── DepartmentRepository.java
+│   │   └── DepartmentRepository.java    # 부서 리포지토리
 │   └── service/
 │       └── EmployeeService.java         # 비즈니스 로직
 ├── global/
-│   └── config/
-│       ├── CorsConfig.java              # CORS 설정
-│       └── QueryDslConfig.java          # QueryDSL 설정
+│   ├── config/
+│   │   ├── CorsConfig.java              # CORS 설정
+│   │   └── QueryDslConfig.java          # QueryDSL 설정
+│   └── exception/
+│       ├── ErrorResponse.java           # 에러 응답 DTO
+│       ├── GlobalExceptionHandler.java  # 전역 예외 처리
+│       └── ResourceNotFoundException.java # 리소스 없음 예외
 └── SpringEmployeeManagerExApplication.java
 ```
 
 #### 주요 파일 설명
+
 - **EmployeeController**: `/api/employees` 엔드포인트 제공
 - **EmployeeService**: 직원 관련 비즈니스 로직 처리
+- **EmployeeRepositoryImpl**: QueryDSL을 사용한 커스텀 쿼리 구현
 - **CorsConfig**: 프론트엔드와의 CORS 통신 허용 설정
 - **QueryDslConfig**: QueryDSL JPAQueryFactory 빈 설정
+- **GlobalExceptionHandler**: 전역 예외 처리 및 에러 응답 형식 통일
+- **ResourceNotFoundException**: 리소스를 찾을 수 없을 때 발생하는 커스텀 예외
 
 ### 프론트엔드
 
@@ -148,6 +165,7 @@ frontend/src/
 ```
 
 #### 주요 파일 설명
+
 - **EmployeePage.tsx**: 직원 CRUD 기능을 제공하는 메인 페이지
 - **employeeApi.ts**: 백엔드 API 호출 함수 모음
 - **axios.ts**: Axios 인스턴스 및 인터셉터 설정
@@ -263,6 +281,7 @@ Unexpected any. Specify a different type.
 ## 실행방법
 
 ### 사전 요구사항
+
 - **Java**: 21 이상
 - **Node.js**: 18 이상
 - **npm** 또는 **yarn**
@@ -270,11 +289,13 @@ Unexpected any. Specify a different type.
 ### 백엔드 실행
 
 1. 프로젝트 루트 디렉토리로 이동
+
 ```bash
-cd spring-react-emploee-mng
+cd spring_employee_manager_ex
 ```
 
-2. Gradle Wrapper를 사용하여 애플리케이션 실행
+1. Gradle Wrapper를 사용하여 애플리케이션 실행
+
 ```bash
 # Windows
 .\gradlew bootRun
@@ -283,7 +304,7 @@ cd spring-react-emploee-mng
 ./gradlew bootRun
 ```
 
-3. 애플리케이션이 시작되면 다음 URL에서 확인 가능:
+1. 애플리케이션이 시작되면 다음 URL에서 확인 가능:
 
    - API: <http://localhost:8080/api/employees>
    - H2 콘솔: <http://localhost:8080/h2-console>
@@ -291,30 +312,35 @@ cd spring-react-emploee-mng
 ### 프론트엔드 실행
 
 1. 프론트엔드 디렉토리로 이동
+
 ```bash
 cd frontend
 ```
 
-2. 의존성 설치 (최초 1회)
+1. 의존성 설치 (최초 1회)
+
 ```bash
 npm install
 ```
 
-3. 개발 서버 실행
+1. 개발 서버 실행
+
 ```bash
 npm run dev
 ```
 
-4. 브라우저에서 <http://localhost:5174> 접속
+1. 브라우저에서 개발 서버 URL 접속 (일반적으로 <http://localhost:5173>)
 
 ### 빌드
 
 #### 백엔드 빌드
+
 ```bash
 .\gradlew build
 ```
 
 #### 프론트엔드 빌드
+
 ```bash
 cd frontend
 npm run build
@@ -323,11 +349,13 @@ npm run build
 ### 테스트 실행
 
 #### 백엔드 테스트
+
 ```bash
 .\gradlew test
 ```
 
 #### 프론트엔드 린트
+
 ```bash
 cd frontend
 npm run lint
@@ -347,6 +375,7 @@ npm run lint
 ### 요청/응답 예시
 
 #### 직원 목록 조회 (GET /api/employees)
+
 ```json
 [
   {
@@ -381,6 +410,7 @@ npm run lint
 ## 개발 환경 설정
 
 ### IDE 설정
+
 - **IntelliJ IDEA** 또는 **VS Code** 권장
 - **Java Extension Pack** (VS Code)
 - **ES7+ React/Redux/React-Native snippets** (VS Code)
